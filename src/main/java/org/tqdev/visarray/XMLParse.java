@@ -9,11 +9,12 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import javax.vecmath.Vector3f;
-import javax.vecmath.Vector4f;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import org.newdawn.slick.opengl.Texture;
@@ -54,6 +55,7 @@ public class XMLParse {
                 DataBuffer = BufferUtils.createByteBuffer((int)vFile.length());
                 DataBuffer.put(vInput);
                 DataBuffer.rewind();
+                vIn.close();
             }catch( Exception e ){
 
             }
@@ -70,6 +72,7 @@ public class XMLParse {
                 IndexBuffer = BufferUtils.createByteBuffer((int)vFile.length()).order(ByteOrder.nativeOrder());
                 IndexBuffer.put(vInput);
                 IndexBuffer.rewind();
+                vIn.close();
             }catch( Exception e ){
 
             }
@@ -165,6 +168,7 @@ public class XMLParse {
                 DataBuffer = BufferUtils.createByteBuffer(vInput.length);
                 DataBuffer.put(vInput);
                 DataBuffer.rewind();
+                vIn.close();
             }catch( Exception e ){
 
             }

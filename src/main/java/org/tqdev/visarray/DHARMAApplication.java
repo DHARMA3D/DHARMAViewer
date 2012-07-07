@@ -15,6 +15,8 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import static org.lwjgl.opengl.GL11.*;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
@@ -42,30 +44,35 @@ public class DHARMAApplication implements VisApplication {
         TConfig.get().setArchiveDetector( new TArchiveDetector( "dhz", new JarDriver(IOPoolLocator.SINGLETON)));
         
         try{ 
-            if( !arguments[0].isEmpty() ){
-                String toOpen = arguments[0];
-                if( arguments[0].contains("http") ){
-                    String filename = System.getProperty("java.io.tmpdir") + arguments[0].substring( arguments[0].lastIndexOf("/") + 1 );
-                    download(arguments[0], filename);
-                    toOpen = filename;
-                }
-
-                TFile list[] = new TFile( toOpen ).listFiles();
-                for (int i = 0; i < list.length; i++) {
-                    if (list[i].getName().contains(".xml")) {
-                        try{
-                            Parser = new XMLParse();
-                            Parser.Parse(list[i]);
-                        }catch( Exception ex ){
-
-                        }
-                    }
-                }
-            }
-
-            TVFS.umount();
+        	if( arguments.length == 0 ){
+        		System.err.println( "No arguments passed. Exiting." );
+        		System.exit(1);
+        	}else{
+	            if( !arguments[0].isEmpty() ){
+	                String toOpen = arguments[0];
+	                if( arguments[0].contains("http") ){
+	                    String filename = System.getProperty("java.io.tmpdir") + arguments[0].substring( arguments[0].lastIndexOf("/") + 1 );
+	                    download(arguments[0], filename);
+	                    toOpen = filename;
+	                }
+	
+	                TFile list[] = new TFile( toOpen ).listFiles();
+	                for (int i = 0; i < list.length; i++) {
+	                    if (list[i].getName().contains(".xml")) {
+	                        try{
+	                            Parser = new XMLParse();
+	                            Parser.Parse(list[i]);
+	                        }catch( Exception ex ){
+	
+	                        }
+	                    }
+	                }
+	            }
+	
+	            TVFS.umount();
+        	}
         }catch( Exception e ){
-            System.err.println( e );
+            System.err.println( "Error: " + e );
         }
         
         init();
@@ -101,11 +108,19 @@ public class DHARMAApplication implements VisApplication {
         mFrameTime = System.currentTimeMillis() - mFrameEnd;
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+        processInput();
 
         render3d();
         render2d();
 
         mFrameEnd = System.currentTimeMillis();
+    }
+    
+    private void processInput(){
+        if (Mouse.isButtonDown(0)) {
+            
+        }
     }
 
     private void render3d() {
