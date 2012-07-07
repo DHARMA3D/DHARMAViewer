@@ -2,6 +2,8 @@ package org.tqdev.visarray;
 
 import de.schlichtherle.truezip.file.TFile;
 import de.schlichtherle.truezip.file.TFileInputStream;
+import de.schlichtherle.truezip.file.TVFS;
+
 import java.io.DataInputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;

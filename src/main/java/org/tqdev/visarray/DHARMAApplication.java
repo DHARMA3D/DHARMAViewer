@@ -15,11 +15,15 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector3f;
+
 import static org.lwjgl.opengl.GL11.*;
 import org.newdawn.slick.Color;
-import org.newdawn.slick.TrueTypeFont;
+import org.newdawn.slick.UnicodeFont;
+import org.newdawn.slick.font.effects.ColorEffect;
 import org.tqdev.visarray.XMLParse.Cloud;
 import org.tqdev.visarray.XMLParse.Mesh;
 import org.tqdev.visarray.XMLParse.Model;
@@ -34,11 +38,15 @@ public class DHARMAApplication implements VisApplication {
     private double mFrameEnd = 0.0f, mFrameTime = 0.0f;
     private Viewport mViewport = new Viewport();
     private XMLParse Parser = new XMLParse();
-    private TrueTypeFont font = new TrueTypeFont(new Font("Times New Roman", Font.BOLD, 18), true);
+    private UnicodeFont font = new UnicodeFont(new Font("Times New Roman", Font.BOLD, 18));
+    
+    // Camera
+    private float Zoom = 0.0f;
+    private Vector2f Rotation = new Vector2f();
 
     public void appletInit() {
         init();
-    }
+    } 
 
     public void applicationInit(String[] arguments) {
         TConfig.get().setArchiveDetector( new TArchiveDetector( "dhz", new JarDriver(IOPoolLocator.SINGLETON)));
@@ -55,8 +63,11 @@ public class DHARMAApplication implements VisApplication {
 	                    download(arguments[0], filename);
 	                    toOpen = filename;
 	                }
+	                
+	                TFile archive = new TFile( toOpen );
+	                archive.setReadOnly();
 	
-	                TFile list[] = new TFile( toOpen ).listFiles();
+	                TFile list[] = archive.listFiles();
 	                for (int i = 0; i < list.length; i++) {
 	                    if (list[i].getName().contains(".xml")) {
 	                        try{
@@ -68,8 +79,6 @@ public class DHARMAApplication implements VisApplication {
 	                    }
 	                }
 	            }
-	
-	            TVFS.umount();
         	}
         }catch( Exception e ){
             System.err.println( "Error: " + e );
@@ -79,6 +88,14 @@ public class DHARMAApplication implements VisApplication {
     }
     
     private void init(){
+    	try{
+	    	font.addAsciiGlyphs(); 
+	    	font.getEffects().add(new ColorEffect(java.awt.Color.white));
+	    	font.loadGlyphs();
+    	}catch( Exception e ){
+    		System.err.println( "Error Loading Font: " + e );
+    	}
+    	
         glShadeModel(GL_SMOOTH);
         glEnable(GL_LIGHTING);
         glEnable(GL_COLOR_MATERIAL);
@@ -119,7 +136,20 @@ public class DHARMAApplication implements VisApplication {
     
     private void processInput(){
         if (Mouse.isButtonDown(0)) {
+            int xDiff = Mouse.getDX();
+            int yDiff = Mouse.getDY();
             
+            // Dragged
+            if( xDiff != 0 || yDiff != 0 ){
+            	Rotation.x += 0.01 * xDiff;
+            	Rotation.y += 0.01 * yDiff;
+            }
+        }
+        
+        int wDiff = Mouse.getDWheel();
+        if( wDiff != 0 ){
+        	Zoom += 0.01 * wDiff;
+        	mViewport.clip(0.1f, 100.0f-Zoom );
         }
     }
 
@@ -128,8 +158,18 @@ public class DHARMAApplication implements VisApplication {
         
         glPushMatrix();
         {
+        	Matrix4f transform = new Matrix4f();
+        	transform.translate( new Vector3f( 0.0f, 0.0f, Zoom-Parser.Models.get(0).Radius ) );
+        	transform.rotate(Rotation.x, new Vector3f( 0.0f, 1.0f, 0.0f ) );
+        	transform.rotate(Rotation.y, new Vector3f( -1.0f, 0.0f, 0.0f ) );
+        	
+        	FloatBuffer matrix = BufferUtils.createFloatBuffer(16);
+        	transform.store(matrix);
+        	matrix.rewind();
+
+        	glMultMatrix( matrix );
+        	
             for( Model m: Parser.Models ){
-                glTranslatef( 0.0f, 0.0f, -m.Radius );
                 glRotatef( 270.0f, 1.0f, 0.0f, 0.0f );
                 glTranslatef(-m.Center.x, -m.Center.y, -m.Center.z);
                 
@@ -155,7 +195,7 @@ public class DHARMAApplication implements VisApplication {
         glEnable( GL_TEXTURE_2D );
         {
             String renderer = String.format("Renderer: %.0fms %.0ffps", CalcAverageTick( mFrameTime ), 1000 / CalcAverageTick( mFrameTime ));
-            font.drawString(mViewport.width() - font.getWidth(renderer), mViewport.height() - font.getHeight(renderer), renderer, Color.white);
+            font.drawString(mViewport.width() - font.getWidth(renderer), mViewport.height() - font.getHeight(renderer), renderer);
         }
         glDisable( GL_TEXTURE_2D );
     }
