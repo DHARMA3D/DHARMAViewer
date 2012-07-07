@@ -11,6 +11,7 @@
 
     <properties>
             <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+            <truezip.version>7.5.5</truezip.version>
     </properties>
 
     <repositories>
@@ -41,6 +42,27 @@
             <groupId>slick</groupId>
             <artifactId>slick</artifactId>
             <version>274</version>
+        </dependency>
+        <dependency>
+            <groupId>de.schlichtherle.truezip</groupId>
+            <artifactId>truezip-file</artifactId>
+            <version>${truezip.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.schlichtherle.truezip</groupId>
+            <artifactId>truezip-swing</artifactId>
+            <version>${truezip.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.schlichtherle.truezip</groupId>
+            <artifactId>truezip-driver-file</artifactId>
+            <version>${truezip.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.schlichtherle.truezip</groupId>
+            <artifactId>truezip-driver-zip</artifactId>
+            <version>${truezip.version}</version>
         </dependency>
     </dependencies>
     
