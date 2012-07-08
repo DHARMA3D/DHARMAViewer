@@ -16,9 +16,7 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.font.effects.ColorEffect;
-import org.tqdev.visarray.XMLParse.Cloud;
-import org.tqdev.visarray.XMLParse.Mesh;
-import org.tqdev.visarray.XMLParse.Model;
+import org.tqdev.visarray.model.*;
 import org.tqdev.visarray.opengl.Viewport;
 
 import de.schlichtherle.truezip.file.TArchiveDetector;
@@ -117,6 +115,7 @@ public class DHARMAApplication implements VisApplication {
     	
         glShadeModel(GL_SMOOTH);
         glEnable(GL_LIGHTING);
+        glEnable(GL_DEPTH_TEST);
         glEnable(GL_COLOR_MATERIAL);
         
         FloatBuffer ambient = BufferUtils.createFloatBuffer(4);
@@ -324,6 +323,6 @@ public class DHARMAApplication implements VisApplication {
 	            System.out.println( "Thread Error: " + exception );
 	        }
 		}
-		
 	}
 }
+
