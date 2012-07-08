@@ -1,18 +1,9 @@
 package org.tqdev.visarray;
 
-import de.schlichtherle.truezip.file.TArchiveDetector;
-import de.schlichtherle.truezip.file.TConfig;
-import de.schlichtherle.truezip.file.TFile;
-import de.schlichtherle.truezip.file.TVFS;
-import de.schlichtherle.truezip.fs.archive.zip.JarDriver;
-import de.schlichtherle.truezip.io.Streams;
-import de.schlichtherle.truezip.socket.sl.IOPoolLocator;
+import static org.lwjgl.opengl.GL11.*;
+
 import java.awt.Font;
-import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -23,20 +14,23 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
-
-import static org.lwjgl.opengl.GL11.*;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.font.effects.ColorEffect;
-import org.newdawn.slick.util.xml.XMLParser;
 import org.tqdev.visarray.XMLParse.Cloud;
 import org.tqdev.visarray.XMLParse.Mesh;
 import org.tqdev.visarray.XMLParse.Model;
 import org.tqdev.visarray.opengl.Viewport;
 
+import de.schlichtherle.truezip.file.TArchiveDetector;
+import de.schlichtherle.truezip.file.TConfig;
+import de.schlichtherle.truezip.file.TFile;
+import de.schlichtherle.truezip.fs.archive.zip.JarDriver;
+import de.schlichtherle.truezip.io.Streams;
+import de.schlichtherle.truezip.socket.sl.IOPoolLocator;
+
 /**
  *
- * @author Omegaice
+ * @author James Sweet
  */
 public class DHARMAApplication implements VisApplication {
     
@@ -46,8 +40,10 @@ public class DHARMAApplication implements VisApplication {
     
     // Rendering
     private Processor ProcessData;
+    private Vector3f Background = new Vector3f( 0.0f, 0.0f, 0.0f );
     
     // Camera
+    private float Radius = 0.0f;
     private float Zoom = 0.0f;
     private Vector2f Rotation = new Vector2f();
     
@@ -68,6 +64,12 @@ public class DHARMAApplication implements VisApplication {
         	}else{
 	            if( !parameters.get(0).isEmpty() ){
 	            	ProcessData = new Processor( parameters.get(0) );
+	            }
+	            if( !parameters.get(1).isEmpty() ){
+	            	String[] part = parameters.get(1).trim().split( "\\s+", 3 );
+	            	Background.x = Float.parseFloat( part[0] );
+	            	Background.y = Float.parseFloat( part[1] );
+	            	Background.z = Float.parseFloat( part[2] );
 	            }
         	}
         }catch( Exception e ){
@@ -126,7 +128,7 @@ public class DHARMAApplication implements VisApplication {
         
         glLightModel(GL_LIGHT_MODEL_AMBIENT, ambient );
 
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor( Background.x, Background.y, Background.z, 0.0f);
         glClearDepth(1.0f);
 
         glEnable(GL_BLEND);
@@ -165,10 +167,16 @@ public class DHARMAApplication implements VisApplication {
             }
         }
         
+        if (Mouse.isButtonDown(1)) {
+        	Rotation.x = 0.0f;
+        	Rotation.y = 0.0f;
+        	Zoom = 0.0f;
+        }
+        
         int wDiff = Mouse.getDWheel();
         if( wDiff != 0 ){
         	Zoom += 0.01 * wDiff;
-        	mViewport.clip(0.1f, 100.0f-Zoom );
+        	mViewport.clip(0.1f, Zoom-Radius );
         }
     }
 
@@ -179,9 +187,14 @@ public class DHARMAApplication implements VisApplication {
         {
         	if( ProcessData.isProcessed() ){
         		List<Model> models = ProcessData.Parser().Models;
+        		
+        		if( Math.abs( Radius ) < 0.00001f ){
+        			Radius = (2*models.get(0).Radius);
+        			mViewport.clip(0.1f, Zoom-Radius );
+        		}
         	
 	        	Matrix4f transform = new Matrix4f();
-	        	transform.translate( new Vector3f( 0.0f, 0.0f, Zoom-(2*models.get(0).Radius) ) );
+	        	transform.translate( new Vector3f( 0.0f, 0.0f, Zoom-Radius ) );
 	        	transform.rotate(Rotation.x, new Vector3f( 0.0f, 1.0f, 0.0f ) );
 	        	transform.rotate(Rotation.y, new Vector3f( -1.0f, 0.0f, 0.0f ) );
 	        	
@@ -251,6 +264,7 @@ public class DHARMAApplication implements VisApplication {
 		List<String> retVal = new ArrayList<String>();
 		
 		retVal.add( "url" );
+		retVal.add( "background" );
 		
 		return retVal;
 	}
