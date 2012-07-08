@@ -233,8 +233,7 @@ public class DHARMAApplication implements VisApplication {
         	if( !ProcessData.isDownloaded() ){
         		String string = "Downloading Model";
         		font.drawString((mViewport.width() / 2)-(font.getWidth(string)/2), (mViewport.height() / 2)-(font.getHeight(string)/2), string);
-        	}
-        	if( !ProcessData.isProcessed() ){
+        	}else if( !ProcessData.isProcessed() ){
         		String string = "Processing Model";
         		font.drawString((mViewport.width() / 2)-(font.getWidth(string)/2), (mViewport.height() / 2)-(font.getHeight(string)/2), string);
         	}
