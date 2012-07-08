@@ -3,7 +3,9 @@ package org.tqdev.visarray;
 import de.schlichtherle.truezip.file.TFile;
 import de.schlichtherle.truezip.file.TFileInputStream;
 import de.schlichtherle.truezip.file.TVFS;
+import de.schlichtherle.truezip.io.Streams;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -50,14 +52,11 @@ public class XMLParse {
             Vertex = Path;
             
             try{
-                TFile vFile = new TFile(Vertex);
-                DataInputStream vIn = new DataInputStream(new TFileInputStream(vFile));
-                byte[] vInput = new byte[(int)vFile.length()];
-                vIn.readFully(vInput);
-                DataBuffer = BufferUtils.createByteBuffer((int)vFile.length());
-                DataBuffer.put(vInput);
+            	ByteArrayOutputStream data = new ByteArrayOutputStream();
+            	Streams.copy( new TFileInputStream(new TFile(Vertex)), data);
+                DataBuffer = BufferUtils.createByteBuffer(data.size());
+                DataBuffer.put(data.toByteArray());
                 DataBuffer.rewind();
-                vIn.close();
             }catch( Exception e ){
 
             }
@@ -67,14 +66,11 @@ public class XMLParse {
             Index = Path;
             
             try{
-                TFile vFile = new TFile(Index);
-                DataInputStream vIn = new DataInputStream(new TFileInputStream(vFile));
-                byte[] vInput = new byte[(int)vFile.length()];
-                vIn.readFully(vInput);
-                IndexBuffer = BufferUtils.createByteBuffer((int)vFile.length()).order(ByteOrder.nativeOrder());
-                IndexBuffer.put(vInput);
-                IndexBuffer.rewind();
-                vIn.close();
+                ByteArrayOutputStream data = new ByteArrayOutputStream();
+            	Streams.copy( new TFileInputStream(new TFile(Index)), data);
+            	IndexBuffer = BufferUtils.createByteBuffer(data.size());
+            	IndexBuffer.put(data.toByteArray());
+            	IndexBuffer.rewind();
             }catch( Exception e ){
 
             }
@@ -103,6 +99,7 @@ public class XMLParse {
             
             if( !Texture.isEmpty() && TextureFile == null){
                 try{
+                	System.out.println( "Reading Texture: " + Texture );
                     InputStream textureInputStream = new TFileInputStream(new TFile(Texture));
                     TextureFile = TextureLoader.getTexture("JPG", textureInputStream);
                 }catch( Exception e ){
@@ -162,15 +159,11 @@ public class XMLParse {
             Vertex = Path;
             
             try{
-                System.out.println( "Reading Cloud File: " + Vertex );
-                TFile vFile = new TFile(Vertex);
-                DataInputStream vIn = new DataInputStream(new TFileInputStream(vFile));
-                byte[] vInput = new byte[(int)vFile.length()];
-                vIn.readFully(vInput);
-                DataBuffer = BufferUtils.createByteBuffer(vInput.length);
-                DataBuffer.put(vInput);
+            	ByteArrayOutputStream data = new ByteArrayOutputStream();
+            	Streams.copy( new TFileInputStream(new TFile(Vertex)), data);
+                DataBuffer = BufferUtils.createByteBuffer(data.size());
+                DataBuffer.put(data.toByteArray());
                 DataBuffer.rewind();
-                vIn.close();
             }catch( Exception e ){
 
             }
