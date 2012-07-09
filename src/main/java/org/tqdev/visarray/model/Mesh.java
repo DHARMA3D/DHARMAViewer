@@ -63,6 +63,8 @@ public class Mesh{
         }
     }
     
+    private static int call = 0;
+    
     public void Draw(){
         if( DataVBO == null && DataBuffer != null ){
             DataVBO = new VertexBufferObject();
@@ -85,13 +87,18 @@ public class Mesh{
         }
         
         if( !Texture.isEmpty() && TextureFile == null){
-            try{
-            	System.out.println( "Reading Texture: " + Texture );
-                InputStream textureInputStream = new TFileInputStream(new TFile(Texture));
-                TextureFile = TextureLoader.getTexture("JPG", textureInputStream);
-            }catch( Exception e ){
-                System.err.println( e );
-            }
+        	if( call == 100 ){
+	            try{
+	            	System.out.println( "Reading Texture: " + Texture );
+	                InputStream textureInputStream = new TFileInputStream(new TFile(Texture));
+	                TextureFile = TextureLoader.getTexture("JPG", textureInputStream);
+	            }catch( Exception e ){
+	                System.err.println( e );
+	            }
+            	call = 0;
+        	}else{
+        		call++;
+        	}
         }
 
         DataVBO.Bind(GL_ARRAY_BUFFER);

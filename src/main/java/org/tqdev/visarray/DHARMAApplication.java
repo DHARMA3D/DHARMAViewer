@@ -236,7 +236,7 @@ public class DHARMAApplication implements VisApplication {
         		String string = "Processing Model";
         		font.drawString((mViewport.width() / 2)-(font.getWidth(string)/2), (mViewport.height() / 2)-(font.getHeight(string)/2), string);
         	}
-            String renderer = String.format("Renderer: %.0fms %.0ffps", CalcAverageTick( mFrameTime ), 1000 / CalcAverageTick( mFrameTime ));
+            String renderer = String.format("Renderer: %.2fms %.2ffps", CalcAverageTick( mFrameTime ), 1000 / CalcAverageTick( mFrameTime ));
             font.drawString(mViewport.width() - font.getWidth(renderer), mViewport.height() - font.getHeight(renderer), renderer);
         }
         glDisable( GL_TEXTURE_2D );
