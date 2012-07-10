@@ -56,7 +56,7 @@ public class DHARMAApplication implements VisApplication {
 		}
 		
         try{ 
-        	if( parameters.size() == 0 ){
+        	if( parameters.isEmpty() ){
         		System.err.println( "No arguments passed. Exiting." );
         		System.exit(1);
         	}else{
@@ -268,61 +268,66 @@ public class DHARMAApplication implements VisApplication {
 	}
 	
 	public class Processor extends Thread{
-		private final String From;
-		private boolean Downloaded, Processed;
-		private XMLParse Parser;
-		
-		public Processor( String address ){
-			From = address;
-			Downloaded = false;
-			Parser = new XMLParse();
-			
-			this.setPriority(Thread.MIN_PRIORITY);
-		}
-		
-		synchronized public boolean isDownloaded(){
-			return Downloaded;
-		}
-		
-		synchronized public boolean isProcessed(){
-			return Processed;
-		}
-		
-		public XMLParse Parser(){
-			return Parser;
-		}
-		
-		public void run() {
-	        String To = System.getProperty("java.io.tmpdir") + From.substring( From.lastIndexOf("/") + 1 );
-	        
-	        System.out.println("Downloading: " + From + " to " + To );
-	        
-	        try{
-	        	Streams.copy(new URL(From).openConnection().getInputStream(), new FileOutputStream(To));
-	        }catch( Exception e ){
-	        	System.err.println( "Download Error: " + e );
-	        }
-	        
-	        System.out.println("Downloaded: " + From );
-            Downloaded = true;
-	        
-	        try {
-	            TFile list[] = new TFile( To ).listFiles();
-	            for (int i = 0; i < list.length; i++) {
-	                if (list[i].getName().contains(".xml")) {
-	                    try{
-	                        Parser.Parse(list[i]);
-	                    }catch( Exception ex ){
-	                    	System.out.println( "Process Error: " + ex );
-	                    }
-	                }
-	            }
-	            
-	            Processed = true;
-	        } catch (Exception exception) {
-	            System.out.println( "Thread Error: " + exception );
-	        }
-		}
+            private final String From;
+            private boolean Downloaded, Processed;
+            private XMLParse Parser;
+
+            public Processor( String address ){
+                    From = address;
+                    Downloaded = false;
+                    Parser = new XMLParse();
+
+                    this.setPriority(Thread.MIN_PRIORITY);
+            }
+
+            synchronized public boolean isDownloaded(){
+                    return Downloaded;
+            }
+
+            synchronized public boolean isProcessed(){
+                    return Processed;
+            }
+
+            public XMLParse Parser(){
+                    return Parser;
+            }
+
+            @Override
+            public void run() {
+                String path = From;
+                
+                if( From.contains("http") ){
+                    path = System.getProperty("java.io.tmpdir") + From.substring( From.lastIndexOf("/") + 1 );
+
+                    System.out.println("Downloading: " + From + " to " + path );
+
+                    try{
+                            Streams.copy(new URL(From).openConnection().getInputStream(), new FileOutputStream(path));
+                    }catch( Exception e ){
+                            System.err.println( "Download Error: " + e );
+                    }
+
+                    System.out.println("Downloaded: " + From );
+                }
+                Downloaded = true;
+
+                try {
+                    TFile list[] = new TFile( path ).listFiles();
+                    for (int i = 0; i < list.length; i++) {
+                        if (list[i].getName().contains(".xml")) {
+                            try{
+                                Parser.Parse(list[i]);
+                            }catch( Exception ex ){
+                                System.out.println( "Process Error: " + ex );
+                            }
+                        }
+                    }
+
+                    Processed = true;
+                } catch (Exception exception) {
+                    System.out.println( "Thread Error: " + exception );
+                }
+            }
 	}
 }
 
