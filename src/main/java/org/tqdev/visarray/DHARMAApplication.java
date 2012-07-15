@@ -243,6 +243,10 @@ public class DHARMAApplication implements VisApplication {
 		return retVal;
 	}
 	
+	public String getTitle(){
+    	return "DHARMA Viewer";
+    }
+	
 	public class Processor extends Thread{
             private final String From;
             private boolean Downloaded, Processed;
