@@ -8,6 +8,7 @@ import java.net.URL;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Mouse;
@@ -45,31 +46,20 @@ public class DHARMAApplication implements VisApplication {
     private float Zoom = 0.0f;
     private Vector2f Rotation = new Vector2f();
     
-    public void initialize( List<String> parameters ) {
+    // Parameters
+    private Parameter URLParam = new Parameter( "url", "", false);
+    private Parameter BackgroundParam = new Parameter("background", "0.0, 0.0, 0.0", true);
+    
+    public void initialize( Map<Parameter,String> parameters ) {
     	TConfig.get().setArchiveDetector( new TArchiveDetector( "dhz", new JarDriver(IOPoolLocator.SINGLETON)));
-        
-    	List<String> requested = getParameters();
-		for (int i = 0; i < requested.size(); i++) {
-			String param = requested.get(i);
-			
-			System.out.println( "Parameter: " + param + " = " + parameters.get(i) );
-		}
-		
+       
         try{ 
-        	if( parameters.isEmpty() ){
-        		System.err.println( "No arguments passed. Exiting." );
-        		System.exit(1);
-        	}else{
-	            if( !parameters.get(0).isEmpty() ){
-	            	ProcessData = new Processor( parameters.get(0) );
-	            }
-	            if( !parameters.get(1).isEmpty() ){
-	            	String[] part = parameters.get(1).trim().split( "\\s+", 3 );
-	            	Background.x = Float.parseFloat( part[0] );
-	            	Background.y = Float.parseFloat( part[1] );
-	            	Background.z = Float.parseFloat( part[2] );
-	            }
-        	}
+            ProcessData = new Processor(parameters.get(URLParam));
+            
+        	String[] part = parameters.get(BackgroundParam).split( ",", 3 );
+        	Background.x = Float.parseFloat( part[0] );
+        	Background.y = Float.parseFloat( part[1] );
+        	Background.z = Float.parseFloat( part[2] );
         }catch( Exception e ){
             System.err.println( "Error: " + e );
         }
@@ -234,11 +224,11 @@ public class DHARMAApplication implements VisApplication {
         return ( ticksum / 100.0f);
     }
  
-	public List<String> getParameters() {
-		List<String> retVal = new ArrayList<String>();
+	public List<Parameter> getParameters() {
+		List<Parameter> retVal = new ArrayList<Parameter>();
 		
-		retVal.add( "url" );
-		retVal.add( "background" );
+		retVal.add( URLParam );
+		retVal.add( BackgroundParam );
 		
 		return retVal;
 	}
