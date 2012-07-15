@@ -45,10 +45,10 @@ public class DHARMAApplication implements VisApplication {
     private float Zoom = 0.0f;
     private Vector2f Rotation = new Vector2f();
     
-    public void appletInit( List<String> parameters ) {
+    public void initialize( List<String> parameters ) {
     	TConfig.get().setArchiveDetector( new TArchiveDetector( "dhz", new JarDriver(IOPoolLocator.SINGLETON)));
         
-    	List<String> requested = Parameters();
+    	List<String> requested = getParameters();
 		for (int i = 0; i < requested.size(); i++) {
 			String param = requested.get(i);
 			
@@ -74,38 +74,7 @@ public class DHARMAApplication implements VisApplication {
             System.err.println( "Error: " + e );
         }
         
-        init();
-    } 
-
-    public void applicationInit(String[] arguments) {
-        TConfig.get().setArchiveDetector( new TArchiveDetector( "dhz", new JarDriver(IOPoolLocator.SINGLETON)));
-        
-        try{ 
-        	if( arguments.length == 0 ){
-        		System.err.println( "No arguments passed. Exiting." );
-        		System.exit(1);
-        	}else{
-	            if( !arguments[0].isEmpty() ){
-	            	ProcessData = new Processor( arguments[0] );
-	            }
-        	}
-        }catch( Exception e ){
-            System.err.println( "Error: " + e );
-        }
-        
-        init();
-    }
-    
-    public void destroy(){
-    	try {
-			ProcessData.join();
-		} catch (InterruptedException e) {
-			System.err.println( e );
-		}
-    }
-    
-    private void init(){
-    	try{
+        try{
 	    	font.addAsciiGlyphs(); 
 	    	font.getEffects().add(new ColorEffect(java.awt.Color.white));
 	    	font.loadGlyphs();
@@ -133,6 +102,14 @@ public class DHARMAApplication implements VisApplication {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
+    
+    public void destroy(){
+    	try {
+			ProcessData.join();
+		} catch (InterruptedException e) {
+			System.err.println( e );
+		}
+    }
 
     public void resize(final int width, final int height) {
         glViewport(0, 0, width, height);
@@ -148,7 +125,10 @@ public class DHARMAApplication implements VisApplication {
         
         processInput();
 
+        mViewport.perspective();
         render3d();
+        
+        mViewport.orthographic();
         render2d();
 
         mFrameEnd = System.currentTimeMillis();
@@ -180,8 +160,6 @@ public class DHARMAApplication implements VisApplication {
     }
 
     private void render3d() {
-        mViewport.perspective();
-        
         glPushMatrix();
         {
         	if( ProcessData.isProcessed() ){
@@ -225,8 +203,6 @@ public class DHARMAApplication implements VisApplication {
     }
 
     private void render2d() {
-        mViewport.orthographic();
-
         glEnable( GL_TEXTURE_2D );
         {
         	if( !ProcessData.isDownloaded() ){
@@ -258,7 +234,7 @@ public class DHARMAApplication implements VisApplication {
         return ( ticksum / 100.0f);
     }
  
-	public List<String> Parameters() {
+	public List<String> getParameters() {
 		List<String> retVal = new ArrayList<String>();
 		
 		retVal.add( "url" );
