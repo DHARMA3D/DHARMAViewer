@@ -1,87 +1,87 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.tqdev</groupId>
-    <artifactId>DHARMAViewer</artifactId>
-    <version>0.1</version>
-    <packaging>jar</packaging>
+	<groupId>org.tqdev</groupId>
+	<artifactId>DHARMAViewer</artifactId>
+	<version>0.1</version>
+	<packaging>jar</packaging>
 
-    <name>DHARMAViewer</name>
-    <url>http://www.dharma3d.org</url>
+	<name>DHARMAViewer</name>
+	<url>http://www.dharma3d.org</url>
 
-    <properties>
-            <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-            <truezip.version>7.5.5</truezip.version>
-    </properties>
+	<properties>
+			<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+			<truezip.version>7.5.5</truezip.version>
+	</properties>
 
-    <repositories>
-        <repository>
-            <id>slick</id>
-            <name>slick</name>
-            <url>http://slick.cokeandcode.com/mavenrepo</url>
-        </repository>
-    </repositories>
+	<repositories>
+		<repository>
+			<id>slick</id>
+			<name>slick</name>
+			<url>http://slick.cokeandcode.com/mavenrepo</url>
+		</repository>
+	</repositories>
 
-    <dependencies>
+	<dependencies>
 	<dependency>
-            <groupId>org.tqdev</groupId>
-            <artifactId>VisArray</artifactId>
-            <version>0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.lwjgl.lwjgl</groupId>
-            <artifactId>lwjgl</artifactId>
-            <version>2.8.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.lwjgl.lwjgl</groupId>
-            <artifactId>lwjgl_util</artifactId>
-            <version>2.8.4</version>
-        </dependency>
-        <dependency>
-            <groupId>slick</groupId>
-            <artifactId>slick</artifactId>
-            <version>274</version>
-        </dependency>
-        <dependency>
-            <groupId>de.schlichtherle.truezip</groupId>
-            <artifactId>truezip-file</artifactId>
-            <version>${truezip.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.schlichtherle.truezip</groupId>
-            <artifactId>truezip-swing</artifactId>
-            <version>${truezip.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.schlichtherle.truezip</groupId>
-            <artifactId>truezip-driver-file</artifactId>
-            <version>${truezip.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.schlichtherle.truezip</groupId>
-            <artifactId>truezip-driver-zip</artifactId>
-            <version>${truezip.version}</version>
-        </dependency>
-    </dependencies>
-    
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>com.googlecode.mavennatives</groupId>
-                <artifactId>maven-nativedependencies-plugin</artifactId>
-                <version>0.0.6</version>
-                <executions>
-                    <execution>
-                        <id>unpacknatives</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                                <goal>copy</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+			<groupId>org.tqdev</groupId>
+			<artifactId>VisArray</artifactId>
+			<version>0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.lwjgl.lwjgl</groupId>
+			<artifactId>lwjgl</artifactId>
+			<version>2.8.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.lwjgl.lwjgl</groupId>
+			<artifactId>lwjgl_util</artifactId>
+			<version>2.8.4</version>
+		</dependency>
+		<dependency>
+			<groupId>slick</groupId>
+			<artifactId>slick</artifactId>
+			<version>274</version>
+		</dependency>
+		<dependency>
+			<groupId>de.schlichtherle.truezip</groupId>
+			<artifactId>truezip-file</artifactId>
+			<version>${truezip.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.schlichtherle.truezip</groupId>
+			<artifactId>truezip-swing</artifactId>
+			<version>${truezip.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.schlichtherle.truezip</groupId>
+			<artifactId>truezip-driver-file</artifactId>
+			<version>${truezip.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>de.schlichtherle.truezip</groupId>
+			<artifactId>truezip-driver-zip</artifactId>
+			<version>${truezip.version}</version>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.googlecode.mavennatives</groupId>
+				<artifactId>maven-nativedependencies-plugin</artifactId>
+				<version>0.0.6</version>
+				<executions>
+					<execution>
+						<id>unpacknatives</id>
+						<phase>generate-resources</phase>
+						<goals>
+								<goal>copy</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
@@ -111,6 +111,15 @@
 					</reportPlugins>
 				</configuration>
 			</plugin>
-        </plugins>
-    </build>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
